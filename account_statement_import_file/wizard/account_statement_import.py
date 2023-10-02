@@ -223,10 +223,10 @@ class AccountStatementImport(models.TransientModel):
                         sanitized_account_number,
                     ),
                 ],
-                limit=1,
+
             )
             ctx_journal_id = self.env.context.get("journal_id")
-            if journal and ctx_journal_id and journal.id != ctx_journal_id:
+            if journal and ctx_journal_id and ctx_journal_id not in journal.ids :
                 ctx_journal = journal_obj.browse(ctx_journal_id)
                 raise UserError(
                     _(
@@ -236,7 +236,7 @@ class AccountStatementImport(models.TransientModel):
                         journal_selected=ctx_journal.display_name,
                     )
                 )
-
+            journal = journal_obj.browse(context_journal_id)
             if not journal:
                 bank_accounts = self.env["res.partner.bank"].search(
                     [
